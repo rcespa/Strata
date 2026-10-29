@@ -1,0 +1,20 @@
+== 2026-10-29T21:56:14 ==
+Engine under test: :8080 (qwen3.8-flash-next-iq3_s), started with HIP_VISIBLE_DEVICES=1
+=> the engine process runs on the R9700 (PCI 43:00.0); decode ~90 tok/s observed.
+
+--- what the engine's OWN /metrics reports (hardware / hardware_static) ---
+gpu_name        : Radeon Instinct MI50 32GB
+gpu_count       : 1
+gpu_power       : 17.0 W
+gpu_power_limit : 210.0 W
+gpu_temp        : 42.0 C
+gpu_mem_used    : 29.8 GiB
+
+--- ground truth, same minute (rocm-smi: GPU[0]=R9700 43:00.0, GPU[1]=MI50 63:00.0) ---
+0       2     0x7551,   23810  51.0°C  171.0W  N/A, N/A, 0         41Mhz   772Mhz  91.76%  auto  300.0W  98%    3%    
+1       1     0x66a1,   27093  40.0°C  17.0W   N/A, N/A, 0         925Mhz  350Mhz  14.51%  auto  210.0W  93%    0%
+
+=> the engine's hardware probe reads the MI50 (sysfs /sys/class/drm/card0; 210W cap,
+   low idle draw), while the engine itself computes on the R9700. The web monitor and
+   strata_bench.py display/record these values verbatim.
+   Full metrics dump: metrics-8080-full.json
